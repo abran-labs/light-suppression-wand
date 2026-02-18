@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "light-suppression-wand",
+  "version": "${version}",
+  "name": "Light Suppression Wand",
+  "description": "Shift+right-click any light-emitting block with a golden hoe to toggle its light emission off/on.",
+  "authors": ["abran"],
+  "contact": {},
+  "license": "MIT",
+  "environment": "server",
+  "entrypoints": {
+    "main": [
+      "com.abran.lightsuppression.LightSuppressionWand"
+    ]
+  },
+  "mixins": [
+    "lightsuppressionwand.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.18.2",
+    "minecraft": "~1.21.11",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
