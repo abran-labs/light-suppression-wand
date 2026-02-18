@@ -1,6 +1,8 @@
 # Light Suppression Wand
 An easy way to suppress light.
 
+![demo](https://i.imgur.com/XuDQ7Nx.gif)
+
 ## Usage
 1. Hold a **golden hoe**
 2. **Shift+right-click** a light-emitting block.
