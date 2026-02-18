@@ -6,7 +6,8 @@
   "server": [
     "BlockLightProviderMixin",
     "ServerWorldMixin",
-    "ScalableLuxBlockLightMixin"
+    "ScalableLuxBlockLightMixin",
+    "ScalableLuxStarLightEngineMixin"
   ],
   "injectors": {
     "defaultRequire": 1
