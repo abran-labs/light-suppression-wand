@@ -11,3 +11,4 @@ An easy way to suppress light.
 - Works with any light-emitting block.
 - Suppression persists across server restarts.
 - Automatic cleanup when suppressed blocks are removed by any means (player breaking, block updates, explosions, pistons, etc.)
+- Compatible with [ScalableLux](https://modrinth.com/mod/scalablelux)

@@ -2,9 +2,11 @@
   "required": true,
   "package": "com.abran.lightsuppression.mixin",
   "compatibilityLevel": "JAVA_21",
+  "plugin": "com.abran.lightsuppression.mixin.LightSuppressionMixinPlugin",
   "server": [
     "BlockLightProviderMixin",
-    "ServerWorldMixin"
+    "ServerWorldMixin",
+    "ScalableLuxBlockLightMixin"
   ],
   "injectors": {
     "defaultRequire": 1
