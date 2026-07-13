@@ -7,7 +7,7 @@
   "authors": ["abran"],
   "contact": {},
   "license": "MIT",
-  "environment": "server",
+  "environment": "*",
   "entrypoints": {
     "main": [
       "com.abran.lightsuppression.LightSuppressionWand"
