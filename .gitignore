@@ -18,6 +18,7 @@ bin/
 
 # Fabric
 run/
+logs/
 .fabric/
 
 # OS
