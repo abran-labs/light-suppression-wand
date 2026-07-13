@@ -19,7 +19,6 @@ bin/
 # Fabric
 run/
 .fabric/
-image.png
 
 # OS
 .DS_Store
