@@ -2,10 +2,10 @@ package com.abran.lightsuppression;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.block.BlockState;
-import net.minecraft.item.Items;
 import net.minecraft.network.packet.s2c.play.LightUpdateS2CPacket;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -21,19 +21,30 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.world.LightType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.BitSet;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class LightSuppressionWand implements ModInitializer {
+    public static final String MOD_ID = "light-suppression-wand";
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+    private static final AtomicReference<LightSuppressionConfig> CONFIG = new AtomicReference<>();
+
     @Override
     public void onInitialize() {
-        UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
-            if (world.isClient()) return ActionResult.PASS;
-            if (!player.isSneaking()) return ActionResult.PASS;
-            if (hand != Hand.MAIN_HAND) return ActionResult.PASS;
-            if (!player.getStackInHand(hand).isOf(Items.GOLDEN_HOE)) return ActionResult.PASS;
+        ServerLifecycleEvents.SERVER_STARTING.register(server -> CONFIG.set(LightSuppressionConfig.load()));
+        ServerLifecycleEvents.SERVER_STOPPED.register(server -> CONFIG.set(null));
 
-            ServerWorld serverWorld = (ServerWorld) world;
+        UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
+            if (!(world instanceof ServerWorld serverWorld) || !(player instanceof ServerPlayerEntity serverPlayer)) return ActionResult.PASS;
+            LightSuppressionConfig config = CONFIG.get();
+            if (config == null) return ActionResult.PASS;
+            if (hand != Hand.MAIN_HAND) return ActionResult.PASS;
+            if (!config.wandItems().contains(player.getStackInHand(hand).getItem())) return ActionResult.PASS;
+            if (config.requireSneaking() && !player.isSneaking()) return ActionResult.PASS;
+            if (config.operatorOnly() && !serverWorld.getServer().getPlayerManager().isOperator(serverPlayer.getPlayerConfigEntry())) return ActionResult.PASS;
             BlockPos pos = hitResult.getBlockPos();
             BlockState state = world.getBlockState(pos);
 
@@ -45,6 +56,9 @@ public class LightSuppressionWand implements ModInitializer {
             }
 
             boolean suppressed = manager.toggle(pos);
+            if (config.durabilityCost() > 0) {
+                serverPlayer.getStackInHand(hand).damage(config.durabilityCost(), serverPlayer, hand);
+            }
 
             // Force light recalculation and sync to clients
             serverWorld.getChunkManager().getLightingProvider().checkBlock(pos);
