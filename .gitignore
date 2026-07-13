@@ -9,6 +9,12 @@ bin/
 *.iws
 *.ipr
 .vscode/
+.classpath
+.project
+.settings/
+
+# OpenCode
+.omo/
 
 # Fabric
 run/
